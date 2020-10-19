@@ -1,5 +1,8 @@
 package UserCucumber;
 
+import exception.InsufficientFundsException;
+import io.cucumber.java.en.And;
+import user.Item;
 import user.User;
 import exception.UserAlreadyRegisteredException;
 import io.cucumber.java.en.Given;
@@ -15,6 +18,7 @@ import org.junit.runner.RunWith;
 public class CucumberTest {
 
     private User user;
+    private Item item;
     private RuntimeException exception;
 
     @Given("^User with registration (true|false)$")
@@ -38,7 +42,7 @@ public class CucumberTest {
     }
 
     @Then("^Operation must throw (.+)$")
-    public void operationShouldBeDeniedBecauseItsAlreadyRegistered(String exceptionName) {
+    public void operationShouldThrow(String exceptionName) {
         Assert.assertEquals(exceptionName, this.exception.getClass().getSimpleName());
     }
 
@@ -53,4 +57,19 @@ public class CucumberTest {
     }
 
 
+    @And("^User buy (.+) at (\\d+) dollars from store$")
+    public void userBuyNotebookAtDollarsFromStore(String itemName, double amount) {
+        item = new Item(itemName, amount);
+        try {
+            user.buyItem(item);
+        } catch (InsufficientFundsException e) {
+            this.exception = e;
+        }
+    }
+
+    @Then("^User must have a notebook and (\\d+) dollars$")
+    public void userMustHaveANotebookAndDollars(double balance) {
+        Assert.assertTrue(user.getItemList().contains(item));
+        Assert.assertEquals(Double.valueOf(0), user.getBalance());
+    }
 }

@@ -1,6 +1,10 @@
 package user;
 
+import exception.InsufficientFundsException;
 import exception.UserAlreadyRegisteredException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class User {
 
@@ -8,10 +12,12 @@ public class User {
     private String username;
     private String password;
     private Double balance;
+    private List<Item> itemList;
 
     public User() {
         this.isRegistered = false;
         this.balance = 0.0;
+        this.itemList = new ArrayList<>();
     }
 
     public void setRegistered(Boolean registered) {
@@ -38,5 +44,17 @@ public class User {
 
     public Double getBalance() {
         return this.balance;
+    }
+
+    public List<Item> getItemList() {
+        return this.itemList;
+    }
+
+    public void buyItem(Item item) {
+        if (this.balance - item.getValue() < 0) {
+            throw new InsufficientFundsException("Insufficient founds to buy the item");
+        }
+        this.itemList.add(item);
+        this.balance -= item.getValue();
     }
 }

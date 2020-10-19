@@ -15,4 +15,16 @@ Feature: Web page registration
     When User adds 100 dollars to his balance
     Then User have 100 dollars
 
+  Scenario: User buy an item of the store
+    Given User with registration true
+    When User adds 100 dollars to his balance
+    And User buy notebook at 100 dollars from store
+    Then User must have a notebook and 0 dollars
+
+  Scenario: User cannot buy something if its too expensive
+    Given User with registration true
+    When User adds 100 dollars to his balance
+    And User buy notebook at 101 dollars from store
+    Then Operation must throw InsufficientFundsException
+
 
